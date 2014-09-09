@@ -1,0 +1,179 @@
+// Assignment #: 12
+//         Name: Dylan Sanders
+//    StudentID: 1206657071
+//      Lecture: 4:30-5:45 TTH
+//  Description: The ControlPanel represent a panel containing //  10 buttons, 2 sliders, 2 labels, and 2 ball panels.
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.event.*;
+
+public class ControlPanel extends JPanel
+{
+
+	private BallPanel ball1, ball2;
+	//declare all your components here
+
+	private int width, height;
+	private JButton upR, downR, leftR, rightR, stopR, upB, downB, leftB, rightB, stopB;
+	private JSlider delayR, delayB;
+	private JLabel labelR, labelB;
+	private JPanel jp1, jp2, jp3, jp4, jp5, jp6, jp7, jp8;
+	private JSplitPane jsp;											//Declaring components
+	private int DIAMETER = 30;
+
+	public ControlPanel(int width, int height)
+	{
+		this.width = width;
+		this.height = height;
+
+		//create 2 ball panels
+		ball1 = new BallPanel(0, 60, Color.red, Color.cyan);
+		ball2 = new BallPanel(0, 60, Color.blue, Color.yellow);		//Creates balls and adds them to JPanel
+		jp8 = new JPanel(new GridLayout(2,1));
+		jp8.add(ball1);
+		jp8.add(ball2);
+
+		//create 10 buttons
+		upR = new JButton("Up Red");
+		downR = new JButton("Down Red");
+		leftR = new JButton("Left Red");
+		rightR = new JButton("Right Red");
+		stopR = new JButton("Stop Red");
+		upB = new JButton("Up Blue");
+		downB = new JButton("Down Blue");
+		leftB = new JButton("Left Blue");
+		rightB = new JButton("Right Blue");
+		stopB = new JButton("Stop Blue");
+		
+		//create 2 sliders
+		delayR = new JSlider(JSlider.VERTICAL, 0, 50, 20);
+		delayB = new JSlider(JSlider.VERTICAL, 0, 50, 20);
+		
+		delayR.setMajorTickSpacing(10);
+		delayR.setMinorTickSpacing(1);
+		delayR.setPaintTicks(true);				//Formating Ticks
+		delayR.setPaintLabels(true);
+		
+		delayB.setMajorTickSpacing(10);
+		delayB.setMinorTickSpacing(1);
+		delayB.setPaintTicks(true);
+		delayB.setPaintLabels(true);
+
+		//add the corresponding listener to sliders and buttons
+		upR.addActionListener(new ButtonListener());
+		downR.addActionListener(new ButtonListener());
+		leftR.addActionListener(new ButtonListener());
+		rightR.addActionListener(new ButtonListener());
+		stopR.addActionListener(new ButtonListener());
+		upB.addActionListener(new ButtonListener());
+		downB.addActionListener(new ButtonListener());
+		leftB.addActionListener(new ButtonListener());
+		rightB.addActionListener(new ButtonListener());
+		stopB.addActionListener(new ButtonListener());
+		
+		delayR.addChangeListener(new SliderListener());
+		delayB.addChangeListener(new SliderListener());
+
+		//organize 5 buttons into a panel using grid layout
+		jp1 = new JPanel(new GridLayout(5,1));
+		jp1.add(upR);
+		jp1.add(downR);
+		jp1.add(leftR);
+		jp1.add(rightR);
+		jp1.add(stopR);
+
+		//organize 5 buttons into a panel using grid layout
+		jp2 = new JPanel(new GridLayout(5,1));
+		jp2.add(upB);
+		jp2.add(downB);
+		jp2.add(leftB);
+		jp2.add(rightB);
+		jp2.add(stopB);
+
+		//create 2 labels
+		labelR = new JLabel("Red Ball Delay");
+		labelB = new JLabel("Blue Ball Delay");
+		
+		//organize a label and a slider into a panel using border layout
+		jp3 = new JPanel(new BorderLayout());
+		jp3.add(labelR, BorderLayout.NORTH);
+		jp3.add(delayR, BorderLayout.CENTER);
+		
+		//organize the panel containing buttons and the panel with a slider
+		jp4 = new JPanel(new GridLayout(1,2));
+		jp4.add(jp1);
+		jp4.add(jp3);
+
+		//organize a label and a slider into a panel using border layout
+		jp5 = new JPanel(new BorderLayout());
+		jp5.add(labelB, BorderLayout.NORTH);
+		jp5.add(delayB, BorderLayout.CENTER);
+		
+		//organize the panel containing buttons and the panel with a slider
+		jp6 = new JPanel(new GridLayout(1,2));
+		jp6.add(jp2);
+		jp6.add(jp5);
+		
+		jp7 = new JPanel(new GridLayout(2,1));
+		jp7.add(jp4);
+		jp7.add(jp6);
+		
+		jsp = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, jp7, jp8);	
+		
+		setLayout(new BorderLayout());							//Split Pane and formatting
+		add(jsp);
+	}
+
+
+	//The ButtonListener class defines actions to be taken in case
+	//each of 10 buttons are pushed.
+	private class ButtonListener implements ActionListener
+	{
+		public void actionPerformed(ActionEvent event)
+		{
+			Object action = event.getSource();
+
+			//if the up button for the red ball is pushed.
+			if(action == upR)
+				ball1.up();
+			if(action == downR)
+				ball1.down();
+			if(action == leftR)
+				ball1.left();
+			if(action == rightR)
+				ball1.right();
+			if(action == stopR)
+				ball1.suspend();
+			if(action == upB)
+				ball2.up();
+			if(action == downB)
+				ball2.down();
+			if(action == leftB)			//Taking care of all the buttons
+				ball2.left();
+			if(action == rightB)
+				ball2.right();
+			if(action == stopB)
+				ball2.suspend();
+
+		}
+	} //end of ButtonListener
+
+	//The SliderListener defines actions to be taken in case
+	//each of the 2 sliders is moved by a user
+	private class SliderListener implements ChangeListener
+	{
+		public void stateChanged(ChangeEvent event)
+		{
+			if(event.getSource() == delayR) 
+				ball1.setDelay(delayR.getValue());		
+			
+			if(event.getSource() == delayB) 
+				ball2.setDelay(delayB.getValue());			//Setting delays to slider value
+
+		}
+
+	} //end of SliderListener
+
+}
