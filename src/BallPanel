@@ -1,0 +1,109 @@
+// Assignment #: 12
+//         Name: Dylan Sanders
+//    StudentID: 1206657071
+//      Lecture: 4:30-5:45 TTH
+//  Description: BallPanel extends JPanel class and defines a panel with a moving ball
+
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+
+public class BallPanel extends JPanel {
+
+	private Color ballColor, backColor;
+	private int x, y;
+	private Timer timer;
+	private int delay = 20;					//Variables
+	private int stepX = 3;
+	private int stepY = 0;
+	private final int CIRCLE_DIAMETER = 20;
+
+	public BallPanel(int x, int y, Color ballColor, Color backColor) {		//Constructor
+
+		this.x = x;
+		this.y = y;
+		this.ballColor = ballColor;
+		this.backColor = backColor;				//Setting variables to parameters
+
+		setBackground(backColor);				//Setting background color
+
+		timer = new Timer(delay, new MovingBallListener());			//Creating timer
+		timer.start();										
+	}
+	
+	//Moves the ball up by subtracting from the Y value
+	public void up() {
+		stepX = 0;
+		stepY = -3;
+		timer.start();
+	}
+
+	//Moves the ball down by adding to the Y value
+	public void down() {
+		stepX = 0;
+		stepY = 3;
+		timer.start();
+	}
+
+	//Moves the ball left by subtracting from the X value
+	public void left() {
+		stepX = -3;
+		stepY = 0;
+		timer.start();
+	}
+
+	//Moves the ball right by adding to the X value
+	public void right() {
+		stepX = 3;
+		stepY = 0;
+		timer.start();
+	}
+
+	//Stops the ball by stopping the timer
+	public void suspend() {
+		timer.stop();
+	}
+
+	//Sets new delay to parameter
+	public void setDelay(int delayNum) {
+		timer.setDelay(delayNum);
+	}
+
+	//Sets up paint component and draws circle
+	public void paintComponent(Graphics page) {
+		super.paintComponent(page);
+		Graphics2D page2D = (Graphics2D) page;
+		
+		page2D.setColor(ballColor);
+		page2D.fillOval(x, y, CIRCLE_DIAMETER, CIRCLE_DIAMETER);
+	}
+
+	private class MovingBallListener implements ActionListener {
+		
+		public void actionPerformed(ActionEvent e) {
+			
+			x += stepX;
+			y += stepY;		//Telling ball how to move based on stepX/Y
+			
+			if(x > getSize().getWidth() - CIRCLE_DIAMETER && stepY == 0) {		//For hitting right wall
+				left();													//Moves left
+			}
+			
+			if(x < 0 && stepY == 0) {							//For hitting left wall
+				right();									//Moves right
+			}
+			
+			if(y > getSize().getHeight() - CIRCLE_DIAMETER && stepX == 0) {		//For hitting the bottom
+				up();					//Moves up
+			}
+			
+			if(y < 0 && stepX == 0) {			//For hitting the top
+				down();				//Moves down
+			}
+			
+			repaint();					//Repaints circle in new position
+		}
+		
+	}
+
+}
